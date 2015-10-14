@@ -15,16 +15,16 @@ public class LogisticTrain {
         this.learningRate = 0.001;
     }
 
-    public void train(ArrayList<TrainingExample> dataSet) {
+    public void train(ArrayList<Example> dataSet) {
         initializeVectorsToZERO();
         printVector(weightVector);
-        for (TrainingExample trainingExample : dataSet) {
-            double probabilityPerExample = calculateSigmoid(trainingExample.getValues(), weightVector);
+        for (Example example : dataSet) {
+            double probabilityPerExample = calculateSigmoid(example.getValues(), weightVector);
 
-            double error = trainingExample.getLabel() - probabilityPerExample;
+            double error = example.getLabel() - probabilityPerExample;
 
-            for (int i = 0; i < trainingExample.getValues().length; i++) {
-                gradientVector[i] += error * trainingExample.values[i];
+            for (int i = 0; i < example.getValues().length; i++) {
+                gradientVector[i] += error * example.values[i];
             }
 
             updateWeightVector(gradientVector);
@@ -33,7 +33,7 @@ public class LogisticTrain {
     }
 
     private void printVector(double[] weightVector) {
-        System.out.print("weight  ");
+        System.out.print("weight ->> ");
         for (double aWeightVector : weightVector) {
             System.out.print(roundTo2Decimals(aWeightVector) + ",");
         }
@@ -68,5 +68,16 @@ public class LogisticTrain {
     double roundTo2Decimals(double val) {
         DecimalFormat df2 = new DecimalFormat("###.##");
         return Double.valueOf(df2.format(val));
+    }
+
+    public void classify(ArrayList<Example> testDataSet) {
+        for (Example testExample : testDataSet) {
+            if (calculateSigmoid(testExample.values, weightVector) >= 0.5) {
+                System.out.println("Classified as " + 1 + "  Actual value " + testExample.getLabel());
+            } else {
+                System.out.println("Classified as " + 0 + "  Actual value " + testExample.getLabel());
+            }
+
+        }
     }
 }

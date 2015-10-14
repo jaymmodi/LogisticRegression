@@ -10,49 +10,55 @@ public class ParseFile {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         try {
             String trainingSetPath = br.readLine();
+            String testSetPath = br.readLine();
+
             br.close();
 
             int classifyLabel = 1;
+            ArrayList<Example> trainingDataSet = new ArrayList<Example>();
+            trainingDataSet = createDataSet(trainingDataSet, classifyLabel, trainingSetPath);
 
-            ArrayList<TrainingExample> dataSet = createDataSet(classifyLabel, trainingSetPath);
+            System.out.println(trainingDataSet.size());
+            LogisticTrain logisticTrain = new LogisticTrain(trainingDataSet.get(0).getValues().length);
+            logisticTrain.train(trainingDataSet);
 
-            System.out.println(dataSet.size());
-            LogisticTrain logisticTrain = new LogisticTrain(dataSet.get(0).getValues().length);
-            logisticTrain.train(dataSet);
+            ArrayList<Example> testDataSet = new ArrayList<Example>();
+            testDataSet = createDataSet(testDataSet, classifyLabel, testSetPath);
+
+            logisticTrain.classify(testDataSet);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static ArrayList<TrainingExample> createDataSet(int classifyLabel, String fileName) throws IOException {
+    public static ArrayList<Example> createDataSet(ArrayList<Example> examples, int classifyLabel, String fileName) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line = null;
         int index = 1;
-        ArrayList<TrainingExample> examples = new ArrayList<TrainingExample>();
 
         while ((line = br.readLine()) != null) {
             String perLine[] = line.split(",");
 
-            TrainingExample trainingExample = new TrainingExample();
-            trainingExample.setIndex(index);
+            Example example = new Example();
+            example.setIndex(index);
             double[] values = new double[perLine.length - 1];
 
             for (int i = 0; i < perLine.length; i++) {
                 if (i == perLine.length - 1) {
                     if ((Double.parseDouble(perLine[i]) != classifyLabel)) {
-                        trainingExample.setLabel(0);
+                        example.setLabel(0);
                     } else {
-                        trainingExample.setLabel(classifyLabel);
+                        example.setLabel(classifyLabel);
                     }
                 } else {
                     values[i] = Double.parseDouble(perLine[i]);
                 }
             }
             index++;
-            trainingExample.setValues(values);
-            examples.add(trainingExample);
+            example.setValues(values);
+            examples.add(example);
         }
         br.close();
         return examples;

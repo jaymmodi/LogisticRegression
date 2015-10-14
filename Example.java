@@ -1,13 +1,13 @@
 package LogisticRegression;
 
 
-public class TrainingExample {
+public class Example {
 
     int index;
     double values[];
     int label;
 
-    public TrainingExample() {
+    public Example() {
     }
 
     public int getIndex() {

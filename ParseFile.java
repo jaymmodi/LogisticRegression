@@ -17,7 +17,7 @@ public class ParseFile {
             ArrayList<TrainingExample> dataSet = createDataSet(classifyLabel, trainingSetPath);
 
             System.out.println(dataSet.size());
-            LogisticTrain logisticTrain = new LogisticTrain();
+            LogisticTrain logisticTrain = new LogisticTrain(dataSet.get(0).getValues().length);
             logisticTrain.train(dataSet);
 
         } catch (IOException e) {
@@ -37,17 +37,17 @@ public class ParseFile {
 
             TrainingExample trainingExample = new TrainingExample();
             trainingExample.setIndex(index);
-            int[] values = new int[perLine.length - 1];
+            double[] values = new double[perLine.length - 1];
 
             for (int i = 0; i < perLine.length; i++) {
                 if (i == perLine.length - 1) {
-                    if ((Integer.parseInt(perLine[i]) != classifyLabel)) {
+                    if ((Double.parseDouble(perLine[i]) != classifyLabel)) {
                         trainingExample.setLabel(0);
                     } else {
                         trainingExample.setLabel(classifyLabel);
                     }
                 } else {
-                    values[i] = Integer.parseInt(perLine[i]);
+                    values[i] = Double.parseDouble(perLine[i]);
                 }
             }
             index++;

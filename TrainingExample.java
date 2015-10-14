@@ -4,7 +4,7 @@ package LogisticRegression;
 public class TrainingExample {
 
     int index;
-    int values[];
+    double values[];
     int label;
 
     public TrainingExample() {
@@ -18,11 +18,11 @@ public class TrainingExample {
         this.index = index;
     }
 
-    public int[] getValues() {
+    public double[] getValues() {
         return values;
     }
 
-    public void setValues(int[] values) {
+    public void setValues(double[] values) {
         this.values = values;
     }
 

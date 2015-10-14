@@ -1,5 +1,6 @@
 package LogisticRegression;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class LogisticTrain {
@@ -16,9 +17,32 @@ public class LogisticTrain {
 
     public void train(ArrayList<TrainingExample> dataSet) {
         initializeVectorsToZERO();
+        printVector(weightVector);
         for (TrainingExample trainingExample : dataSet) {
             double probabilityPerExample = calculateSigmoid(trainingExample.getValues(), weightVector);
-            System.out.println("probabilityPerExample = " + probabilityPerExample);
+
+            double error = trainingExample.getLabel() - probabilityPerExample;
+
+            for (int i = 0; i < trainingExample.getValues().length; i++) {
+                gradientVector[i] += error * trainingExample.values[i];
+            }
+
+            updateWeightVector(gradientVector);
+            printVector(weightVector);
+        }
+    }
+
+    private void printVector(double[] weightVector) {
+        System.out.print("weight  ");
+        for (double aWeightVector : weightVector) {
+            System.out.print(roundTo2Decimals(aWeightVector) + ",");
+        }
+        System.out.println();
+    }
+
+    private void updateWeightVector(double[] gradientVector) {
+        for (int i = 0; i < weightVector.length; i++) {
+            weightVector[i] += learningRate * gradientVector[i];
         }
     }
 
@@ -39,5 +63,10 @@ public class LogisticTrain {
         }
 
         return 1 / (1 + Math.exp(-dotProduct));
+    }
+
+    double roundTo2Decimals(double val) {
+        DecimalFormat df2 = new DecimalFormat("###.##");
+        return Double.valueOf(df2.format(val));
     }
 }

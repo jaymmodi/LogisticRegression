@@ -4,13 +4,10 @@ package LogisticRegression;
 public class TrainingExample {
 
     int index;
-    Integer values[];
+    int values[];
     int label;
 
-    public TrainingExample(int index, Integer[] values, int label) {
-        this.index = index;
-        this.values = values;
-        this.label = label;
+    public TrainingExample() {
     }
 
     public int getIndex() {
@@ -21,11 +18,11 @@ public class TrainingExample {
         this.index = index;
     }
 
-    public Integer[] getValues() {
+    public int[] getValues() {
         return values;
     }
 
-    public void setValues(Integer[] values) {
+    public void setValues(int[] values) {
         this.values = values;
     }
 

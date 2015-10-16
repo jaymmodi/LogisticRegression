@@ -7,11 +7,16 @@ import java.util.ArrayList;
 public class ParseFile {
 
     public static void main(String[] args) {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        FileReader fr = null;
+        BufferedReader br = null;
         try {
+            fr = new FileReader(new File("input.txt"));
+            br = new BufferedReader(fr);
+
             String trainingSetPath = br.readLine();
             String testSetPath = br.readLine();
 
+            fr.close();
             br.close();
 
             int classifyLabel = 1;
@@ -35,7 +40,7 @@ public class ParseFile {
     public static ArrayList<Example> createDataSet(ArrayList<Example> examples, int classifyLabel, String fileName) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(fileName));
-        String line = null;
+        String line;
         int index = 1;
 
         while ((line = br.readLine()) != null) {

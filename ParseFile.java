@@ -1,14 +1,19 @@
 package LogisticRegression;
 
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ParseFile {
 
     public static void main(String[] args) {
-        FileReader fr = null;
-        BufferedReader br = null;
+        FileReader fr;
+        BufferedReader br;
+
         try {
             fr = new FileReader(new File("input.txt"));
             br = new BufferedReader(fr);
@@ -16,25 +21,46 @@ public class ParseFile {
             String trainingSetPath = br.readLine();
             String testSetPath = br.readLine();
 
+            HashSet<Integer> uniqueLabels = readAllClassifyLabels(br);
+
             fr.close();
             br.close();
 
-            int classifyLabel = 1;
-            ArrayList<Example> trainingDataSet = new ArrayList<Example>();
-            trainingDataSet = createDataSet(trainingDataSet, classifyLabel, trainingSetPath);
+            for (Integer uniqueLabel : uniqueLabels) {
 
-            System.out.println(trainingDataSet.size());
-            LogisticTrain logisticTrain = new LogisticTrain(trainingDataSet.get(0).getValues().length);
-            logisticTrain.train(trainingDataSet);
+                int classifyLabel = uniqueLabel;
 
-            ArrayList<Example> testDataSet = new ArrayList<Example>();
-            testDataSet = createDataSet(testDataSet, classifyLabel, testSetPath);
+                ArrayList<Example> trainingDataSet = new ArrayList<Example>();
+                trainingDataSet = createDataSet(trainingDataSet, classifyLabel, trainingSetPath);
 
-            logisticTrain.classify(testDataSet);
+                System.out.println(trainingDataSet.size());
+                LogisticTrain logisticTrain = new LogisticTrain(trainingDataSet.get(0).getValues().length);
+                logisticTrain.train(trainingDataSet);
+
+                ArrayList<Example> testDataSet = new ArrayList<Example>();
+                testDataSet = createDataSet(testDataSet, classifyLabel, testSetPath);
+
+                logisticTrain.classify(testDataSet);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static HashSet<Integer> readAllClassifyLabels(BufferedReader br) {
+        String line;
+        HashSet<Integer> uniqueLabels = null;
+        try {
+            while ((line = br.readLine()) != null) {
+                String[] perLine = line.split(",");
+                int label = Integer.parseInt(perLine[perLine.length]);
+                uniqueLabels.add(label);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return uniqueLabels;
     }
 
     public static ArrayList<Example> createDataSet(ArrayList<Example> examples, int classifyLabel, String fileName) throws IOException {

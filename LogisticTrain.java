@@ -2,6 +2,7 @@ package LogisticRegression;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class LogisticTrain {
 
@@ -9,9 +10,12 @@ public class LogisticTrain {
     double gradientVector[];
     private double learningRate;
 
+    List<double[]> allWeightVectorList;
+
     public LogisticTrain(int length) {
         weightVector = new double[length];
         gradientVector = new double[length];
+        allWeightVectorList = new ArrayList<double[]>();
         this.learningRate = 0.001;
     }
 
@@ -30,6 +34,11 @@ public class LogisticTrain {
             updateWeightVector(gradientVector);
             printVector(weightVector);
         }
+        addToListOfAllWeightVectors(weightVector);
+    }
+
+    private void addToListOfAllWeightVectors(double[] weightVector) {
+        allWeightVectorList.add(weightVector);
     }
 
     private void printVector(double[] weightVector) {

@@ -19,7 +19,7 @@ public class Example {
     }
 
     public double[] getValues() {
-        return values;  
+        return values;
     }
 
     public void setValues(double[] values) {

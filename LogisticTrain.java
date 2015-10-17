@@ -32,8 +32,8 @@ public class LogisticTrain {
             }
 
             updateWeightVector(gradientVector);
-            printVector(weightVector);
         }
+        printVector(weightVector);
         addToListOfAllWeightVectors(weightVector);
     }
 
@@ -81,12 +81,8 @@ public class LogisticTrain {
 
     public void classify(ArrayList<Example> testDataSet) {
         for (Example testExample : testDataSet) {
-            if (calculateSigmoid(testExample.values, weightVector) >= 0.5) {
-                System.out.println("Classified as " + 1 + "  Actual value " + testExample.getLabel());
-            } else {
-                System.out.println("Classified as " + 0 + "  Actual value " + testExample.getLabel());
-            }
-
+            double probabilityOfClassification = calculateSigmoid(testExample.values, weightVector);
+            System.out.println("Classified probability " + probabilityOfClassification + "  Actual value " + testExample.getLabel());
         }
     }
 }

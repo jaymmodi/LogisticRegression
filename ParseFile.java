@@ -21,7 +21,7 @@ public class ParseFile {
             String trainingSetPath = br.readLine();
             String testSetPath = br.readLine();
 
-            HashSet<Integer> uniqueLabels = readAllClassifyLabels(br);
+            HashSet<Integer> uniqueLabels = readAllClassifyLabels(trainingSetPath);
 
             fr.close();
             br.close();
@@ -48,13 +48,17 @@ public class ParseFile {
         }
     }
 
-    private static HashSet<Integer> readAllClassifyLabels(BufferedReader br) {
+    private static HashSet<Integer> readAllClassifyLabels(String trainSetPath) {
+        FileReader fr;
+        BufferedReader br;
         String line;
-        HashSet<Integer> uniqueLabels = null;
+        HashSet<Integer> uniqueLabels = new HashSet<Integer>();
         try {
+            fr = new FileReader(new File(trainSetPath));
+            br = new BufferedReader(fr);
             while ((line = br.readLine()) != null) {
                 String[] perLine = line.split(",");
-                int label = Integer.parseInt(perLine[perLine.length]);
+                int label = Integer.parseInt(perLine[perLine.length-1]);
                 uniqueLabels.add(label);
             }
         } catch (IOException e) {

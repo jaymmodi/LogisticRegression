@@ -1,12 +1,8 @@
 package LogisticRegression;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class ParseFile {
 
@@ -20,80 +16,55 @@ public class ParseFile {
 
             String trainingSetPath = br.readLine();
             String testSetPath = br.readLine();
-
-            HashSet<Integer> uniqueLabels = readAllClassifyLabels(trainingSetPath);
-
-            fr.close();
             br.close();
 
-            for (Integer uniqueLabel : uniqueLabels) {
+            int classifyLabel = 1;
 
-                int classifyLabel = uniqueLabel;
+            ArrayList<Example> dataSet = createDataSet(classifyLabel, trainingSetPath);
 
-                ArrayList<Example> trainingDataSet = new ArrayList<Example>();
-                trainingDataSet = createDataSet(trainingDataSet, classifyLabel, trainingSetPath);
+            System.out.println(dataSet.size());
+            LogisticTrain logisticTrain = new LogisticTrain(dataSet.get(0).getValues().length);
+            logisticTrain.train(dataSet);
 
-                System.out.println(trainingDataSet.size());
-                LogisticTrain logisticTrain = new LogisticTrain(trainingDataSet.get(0).getValues().length);
-                logisticTrain.train(trainingDataSet);
-
-                ArrayList<Example> testDataSet = new ArrayList<Example>();
-                testDataSet = createDataSet(testDataSet, classifyLabel, testSetPath);
-
-                logisticTrain.classify(testDataSet);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            ArrayList<Example> testDataSet = createDataSet(classifyLabel, testSetPath);
+            logisticTrain.classify(testDataSet);
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
         }
+
     }
 
-    private static HashSet<Integer> readAllClassifyLabels(String trainSetPath) {
-        FileReader fr;
-        BufferedReader br;
-        String line;
-        HashSet<Integer> uniqueLabels = new HashSet<Integer>();
-        try {
-            fr = new FileReader(new File(trainSetPath));
-            br = new BufferedReader(fr);
-            while ((line = br.readLine()) != null) {
-                String[] perLine = line.split(",");
-                int label = Integer.parseInt(perLine[perLine.length-1]);
-                uniqueLabels.add(label);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return uniqueLabels;
-    }
 
-    public static ArrayList<Example> createDataSet(ArrayList<Example> examples, int classifyLabel, String fileName) throws IOException {
+    public static ArrayList<Example> createDataSet(int classifyLabel, String fileName) throws IOException {
 
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         String line;
         int index = 1;
+        ArrayList<Example> examples = new ArrayList<Example>();
 
         while ((line = br.readLine()) != null) {
             String perLine[] = line.split(",");
 
-            Example example = new Example();
-            example.setIndex(index);
+            Example trainingExample = new Example();
+            trainingExample.setIndex(index);
             double[] values = new double[perLine.length - 1];
 
             for (int i = 0; i < perLine.length; i++) {
                 if (i == perLine.length - 1) {
                     if ((Double.parseDouble(perLine[i]) != classifyLabel)) {
-                        example.setLabel(0);
+                        trainingExample.setLabel(0);
                     } else {
-                        example.setLabel(classifyLabel);
+                        trainingExample.setLabel(classifyLabel);
                     }
                 } else {
                     values[i] = Double.parseDouble(perLine[i]);
                 }
             }
             index++;
-            example.setValues(values);
-            examples.add(example);
+            trainingExample.setValues(values);
+            examples.add(trainingExample);
         }
         br.close();
         return examples;

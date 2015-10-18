@@ -22,13 +22,13 @@ public class LogisticTrain {
     public void train(ArrayList<Example> dataSet) {
         initializeVectorsToZERO();
         printVector(weightVector);
-        for (Example example : dataSet) {
-            double probabilityPerExample = calculateSigmoid(example.getValues(), weightVector);
+        for (Example trainingExample : dataSet) {
+            double probabilityPerExample = calculateSigmoid(trainingExample.getValues(), weightVector);
 
-            double error = example.getLabel() - probabilityPerExample;
+            double error = trainingExample.getLabel() - probabilityPerExample;
 
-            for (int i = 0; i < example.getValues().length; i++) {
-                gradientVector[i] += error * example.values[i];
+            for (int i = 0; i < trainingExample.getValues().length; i++) {
+                gradientVector[i] += error * trainingExample.values[i];
             }
 
             updateWeightVector(gradientVector);
@@ -42,7 +42,7 @@ public class LogisticTrain {
     }
 
     private void printVector(double[] weightVector) {
-        System.out.print("weight ->> ");
+        System.out.print("weight  ");
         for (double aWeightVector : weightVector) {
             System.out.print(roundTo2Decimals(aWeightVector) + ",");
         }
@@ -85,4 +85,5 @@ public class LogisticTrain {
             System.out.println("Classified probability " + probabilityOfClassification + "  Actual value " + testExample.getLabel());
         }
     }
+
 }

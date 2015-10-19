@@ -20,34 +20,27 @@ public class LogisticTrain {
     }
 
     public void train(ArrayList<Example> dataSet) {
-        initializeVectorsToZERO();
-        printVector(weightVector);
-        boolean flag = false;
-
+        initializeVectorsToZERO(gradientVector);
+        initializeVectorsToZERO(weightVector);
         while (true) {
-//            storeLastWeightVector(lastWeightVector,weightVector);
+
+            initializeVectorsToZERO(gradientVector);
+            storeLastWeightVector(lastWeightVector, weightVector);
+
             for (Example trainingExample : dataSet) {
-                double probabilityPerExample = calculateSigmoid(trainingExample.getValues(), weightVector);
+                double probabilityPerExample = calculateSigmoid(trainingExample.getValues());
 
                 double error = trainingExample.getLabel() - probabilityPerExample;
 
                 for (int i = 0; i < trainingExample.getValues().length; i++) {
                     gradientVector[i] += error * trainingExample.values[i];
                 }
-                storeLastWeightVector(lastWeightVector, weightVector);
-                updateWeightVector(gradientVector);
-//                printVector(weightVector);
 
-
-                if (Math.abs(calculateDifference(weightVector, lastWeightVector)) <= 0.0001) {
-                    flag = true;
-                    break;
-                }
+                updateWeightVector();
             }
-            if (flag) {
+            if (Math.abs(calculateDifference(weightVector, lastWeightVector)) <= 0.0001) {
                 break;
             }
-
         }
     }
 
@@ -58,62 +51,85 @@ public class LogisticTrain {
     }
 
 
-    private double calculateDifference(double[] weightVector, double[] lastWeigthVector) {
+    private double calculateDifference(double[] weightVector, double[] lastWeightVector) {
         double difference = 0;
         for (int i = 0; i < weightVector.length; i++) {
-            difference = difference + (weightVector[i] - lastWeigthVector[i]);
+            difference = difference + (weightVector[i] - lastWeightVector[i]);
         }
-        System.out.println(difference);
         return difference;
     }
 
     private void printVector(double[] weightVector) {
-        System.out.print("weight  ");
+        System.out.print("weight => ");
         for (double aWeightVector : weightVector) {
             System.out.print(aWeightVector + ",");
         }
         System.out.println();
     }
 
-    private void updateWeightVector(double[] gradientVector) {
+    private void updateWeightVector() {
         for (int i = 0; i < weightVector.length; i++) {
             weightVector[i] += learningRate * gradientVector[i];
         }
     }
 
-    private void initializeVectorsToZERO() {
-        for (int i = 0; i < weightVector.length; i++) {
-            weightVector[i] = 0.0;
+    private void initializeVectorsToZERO(double[] vector) {
+        for (int i = 0; i < vector.length; i++) {
+            vector[i] = 0.0;
         }
 
-        for (int i = 0; i < gradientVector.length; i++) {
-            gradientVector[i] = 0.0;
-        }
     }
 
-    private double calculateSigmoid(double[] values, double[] weight) {
+    private double calculateSigmoid(double[] values) {
         double dotProduct = 0;
-        for (int i = 0; i < weight.length; i++) {
-            dotProduct += values[i] * weight[i];
+        for (int i = 0; i < weightVector.length; i++) {
+            dotProduct += values[i] * weightVector[i];
         }
 
         return 1 / (1 + Math.exp(-dotProduct));
     }
 
-    double roundTo2Decimals(double val) {
-        DecimalFormat df2 = new DecimalFormat("###.##");
-        return Double.valueOf(df2.format(val));
-    }
-
     public void classify(ArrayList<Example> testDataSet) {
+        int truePositive = 0;
+        int trueNegaitve = 0;
+        int falsePositive = 0;
+        int falseNegative = 0;
+
         for (Example testExample : testDataSet) {
-            double probabilityOfClassification = calculateSigmoid(testExample.values, weightVector);
+            double probabilityOfClassification = calculateSigmoid(testExample.values);
             if (probabilityOfClassification >= 0.5) {
-                System.out.println("Classified as " + 1 + "  Actual value " + testExample.getLabel());
+                if (testExample.getLabel() == 1) {
+                    truePositive++;
+                } else {
+                    falsePositive++;
+                }
             } else {
-                System.out.println("Classified as " + 0 + "  Actual value " + testExample.getLabel());
+                if (testExample.getLabel() == 1) {
+                    falseNegative++;
+                } else {
+                    trueNegaitve++;
+                }
             }
         }
+
+        createConfusionMatrix(truePositive, falsePositive, trueNegaitve, falseNegative);
+    }
+
+    private void createConfusionMatrix(int truePositive, int falsePositive, int trueNegaitve, int falseNegative) {
+        System.out.println("--------------------------------------------------");
+        System.out.println("                  Actual                          ");
+        System.out.println("--------------------------------------------------");
+        System.out.println("           0           |           1              ");
+        System.out.println("--------------------------------------------------");
+        System.out.println("| P |   |              |                           ");
+        System.out.println("| R |   |              |                           ");
+        System.out.println("| E | 0 |   " + trueNegaitve + "         |  " + falseNegative + "                         ");
+        System.out.println("| D |   |              |                           ");
+        System.out.println("| I |---|-----------------------------------------");
+        System.out.println("| C |   |              |                           ");
+        System.out.println("| T |   |              |                          ");
+        System.out.println("| E | 1 |   " + falsePositive + "          |   " + truePositive + "                        ");
+        System.out.println("| D |   |              |                           ");
     }
 
 }

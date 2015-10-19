@@ -21,14 +21,15 @@ public class ParseFile {
             int classifyLabel = 1;
 
             ArrayList<Example> dataSet = createDataSet(classifyLabel, trainingSetPath);
-
             System.out.println(dataSet.size());
+
             LogisticTrain logisticTrain = new LogisticTrain(dataSet.get(0).getValues().length);
             logisticTrain.train(dataSet);
+            System.out.println("training done");
 
             ArrayList<Example> testDataSet = createDataSet(classifyLabel, testSetPath);
             logisticTrain.classify(testDataSet);
-//            System.out.println("training done");
+
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
         } catch (IOException e1) {
@@ -36,7 +37,6 @@ public class ParseFile {
         }
 
     }
-
 
     public static ArrayList<Example> createDataSet(int classifyLabel, String fileName) throws IOException {
 

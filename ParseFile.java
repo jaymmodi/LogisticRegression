@@ -28,6 +28,7 @@ public class ParseFile {
 
             ArrayList<Example> testDataSet = createDataSet(classifyLabel, testSetPath);
             logisticTrain.classify(testDataSet);
+//            System.out.println("training done");
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
         } catch (IOException e1) {

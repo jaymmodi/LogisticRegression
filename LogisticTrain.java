@@ -2,7 +2,6 @@ package LogisticRegression;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class LogisticTrain {
 
@@ -10,41 +9,68 @@ public class LogisticTrain {
     double gradientVector[];
     private double learningRate;
 
-    List<double[]> allWeightVectorList;
+    double lastWeightVector[];
+
 
     public LogisticTrain(int length) {
         weightVector = new double[length];
         gradientVector = new double[length];
-        allWeightVectorList = new ArrayList<double[]>();
+        lastWeightVector = new double[length];
         this.learningRate = 0.001;
     }
 
     public void train(ArrayList<Example> dataSet) {
         initializeVectorsToZERO();
         printVector(weightVector);
-        for (Example trainingExample : dataSet) {
-            double probabilityPerExample = calculateSigmoid(trainingExample.getValues(), weightVector);
+        boolean flag = false;
 
-            double error = trainingExample.getLabel() - probabilityPerExample;
+        while (true) {
+//            storeLastWeightVector(lastWeightVector,weightVector);
+            for (Example trainingExample : dataSet) {
+                double probabilityPerExample = calculateSigmoid(trainingExample.getValues(), weightVector);
 
-            for (int i = 0; i < trainingExample.getValues().length; i++) {
-                gradientVector[i] += error * trainingExample.values[i];
+                double error = trainingExample.getLabel() - probabilityPerExample;
+
+                for (int i = 0; i < trainingExample.getValues().length; i++) {
+                    gradientVector[i] += error * trainingExample.values[i];
+                }
+                storeLastWeightVector(lastWeightVector, weightVector);
+                updateWeightVector(gradientVector);
+//                printVector(weightVector);
+
+
+                if (Math.abs(calculateDifference(weightVector, lastWeightVector)) <= 0.0001) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                break;
             }
 
-            updateWeightVector(gradientVector);
         }
-        printVector(weightVector);
-        addToListOfAllWeightVectors(weightVector);
     }
 
-    private void addToListOfAllWeightVectors(double[] weightVector) {
-        allWeightVectorList.add(weightVector);
+    private void storeLastWeightVector(double[] lastWeightVector, double[] weightVector) {
+        for (int i = 0; i < weightVector.length; i++) {
+            lastWeightVector[i] = weightVector[i];
+        }
+    }
+
+
+    private double calculateDifference(double[] weightVector, double[] lastWeigthVector) {
+        double difference = 0;
+        for (int i = 0; i < weightVector.length; i++) {
+            difference = difference + (weightVector[i] - lastWeigthVector[i]);
+        }
+        System.out.println(difference);
+        return difference;
     }
 
     private void printVector(double[] weightVector) {
         System.out.print("weight  ");
         for (double aWeightVector : weightVector) {
-            System.out.print(roundTo2Decimals(aWeightVector) + ",");
+            System.out.print(aWeightVector + ",");
         }
         System.out.println();
     }
@@ -82,7 +108,11 @@ public class LogisticTrain {
     public void classify(ArrayList<Example> testDataSet) {
         for (Example testExample : testDataSet) {
             double probabilityOfClassification = calculateSigmoid(testExample.values, weightVector);
-            System.out.println("Classified probability " + probabilityOfClassification + "  Actual value " + testExample.getLabel());
+            if (probabilityOfClassification >= 0.5) {
+                System.out.println("Classified as " + 1 + "  Actual value " + testExample.getLabel());
+            } else {
+                System.out.println("Classified as " + 0 + "  Actual value " + testExample.getLabel());
+            }
         }
     }
 

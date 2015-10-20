@@ -1,6 +1,5 @@
 package LogisticRegression;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class LogisticTrain {
@@ -20,11 +19,13 @@ public class LogisticTrain {
     }
 
     public void train(ArrayList<Example> dataSet) {
-        initializeVectorsToZERO(gradientVector);
-        initializeVectorsToZERO(weightVector);
-        while (true) {
 
-            initializeVectorsToZERO(gradientVector);
+        System.out.println("Learning Rate = " + learningRate);
+        initializeVectorToZERO(gradientVector);
+        initializeVectorToZERO(weightVector);
+
+        while (true) {
+            initializeVectorToZERO(gradientVector);
             storeLastWeightVector(lastWeightVector, weightVector);
 
             for (Example trainingExample : dataSet) {
@@ -73,7 +74,7 @@ public class LogisticTrain {
         }
     }
 
-    private void initializeVectorsToZERO(double[] vector) {
+    private void initializeVectorToZERO(double[] vector) {
         for (int i = 0; i < vector.length; i++) {
             vector[i] = 0.0;
         }
@@ -91,7 +92,7 @@ public class LogisticTrain {
 
     public void classify(ArrayList<Example> testDataSet) {
         int truePositive = 0;
-        int trueNegaitve = 0;
+        int trueNegative = 0;
         int falsePositive = 0;
         int falseNegative = 0;
 
@@ -107,15 +108,25 @@ public class LogisticTrain {
                 if (testExample.getLabel() == 1) {
                     falseNegative++;
                 } else {
-                    trueNegaitve++;
+                    trueNegative++;
                 }
             }
         }
-
-        createConfusionMatrix(truePositive, falsePositive, trueNegaitve, falseNegative);
+        calculateAccuracy(truePositive, falsePositive, trueNegative, falseNegative);
+        createConfusionMatrix(truePositive, falsePositive, trueNegative, falseNegative);
     }
 
-    private void createConfusionMatrix(int truePositive, int falsePositive, int trueNegaitve, int falseNegative) {
+    private void calculateAccuracy(int truePositive, int falsePositive, int trueNegative, int falseNegative) {
+        double accuracy = (truePositive + trueNegative) / (truePositive + trueNegative + falsePositive + falseNegative) * 100;
+
+        System.out.println("Accuracy =  " + accuracy);
+    }
+
+    private void createConfusionMatrix(int truePositive, int falsePositive, int trueNegative, int falseNegative) {
+
+        System.out.println("Confusion Matrix ");
+
+
         System.out.println("--------------------------------------------------");
         System.out.println("                  Actual                          ");
         System.out.println("--------------------------------------------------");
@@ -123,7 +134,7 @@ public class LogisticTrain {
         System.out.println("--------------------------------------------------");
         System.out.println("| P |   |              |                           ");
         System.out.println("| R |   |              |                           ");
-        System.out.println("| E | 0 |   " + trueNegaitve + "         |  " + falseNegative + "                         ");
+        System.out.println("| E | 0 |   " + trueNegative + "         |  " + falseNegative + "                         ");
         System.out.println("| D |   |              |                           ");
         System.out.println("| I |---|-----------------------------------------");
         System.out.println("| C |   |              |                           ");

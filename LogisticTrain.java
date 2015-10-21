@@ -11,11 +11,11 @@ public class LogisticTrain {
     double lastWeightVector[];
 
 
-    public LogisticTrain(int length) {
+    public LogisticTrain(int length, double learningRate) {
         weightVector = new double[length];
         gradientVector = new double[length];
         lastWeightVector = new double[length];
-        this.learningRate = 0.001;
+        this.learningRate = learningRate;
     }
 
     public void train(ArrayList<Example> dataSet) {
@@ -91,10 +91,10 @@ public class LogisticTrain {
     }
 
     public void classify(ArrayList<Example> testDataSet) {
-        int truePositive = 0;
-        int trueNegative = 0;
-        int falsePositive = 0;
-        int falseNegative = 0;
+        double truePositive = 0;
+        double trueNegative = 0;
+        double falsePositive = 0;
+        double falseNegative = 0;
 
         for (Example testExample : testDataSet) {
             double probabilityOfClassification = calculateSigmoid(testExample.values);
@@ -116,14 +116,14 @@ public class LogisticTrain {
         createConfusionMatrix(truePositive, falsePositive, trueNegative, falseNegative);
     }
 
-    private void calculateAccuracy(int truePositive, int falsePositive, int trueNegative, int falseNegative) {
+    private void calculateAccuracy(double truePositive, double falsePositive, double trueNegative, double falseNegative) {
         double accuracy = (truePositive + trueNegative) / (truePositive + trueNegative + falsePositive + falseNegative) * 100;
 
         System.out.println("Accuracy =  " + accuracy);
     }
 
-    private void createConfusionMatrix(int truePositive, int falsePositive, int trueNegative, int falseNegative) {
-
+    private void createConfusionMatrix(double truePositive, double falsePositive, double trueNegative, double falseNegative) {
+        printVector(weightVector);
         System.out.println("Confusion Matrix ");
 
 
@@ -134,12 +134,12 @@ public class LogisticTrain {
         System.out.println("--------------------------------------------------");
         System.out.println("| P |   |              |                           ");
         System.out.println("| R |   |              |                           ");
-        System.out.println("| E | 0 |   " + trueNegative + "         |  " + falseNegative + "                         ");
+        System.out.println("| E | 0 |   " + trueNegative + "       |  " + falseNegative + "                         ");
         System.out.println("| D |   |              |                           ");
         System.out.println("| I |---|-----------------------------------------");
         System.out.println("| C |   |              |                           ");
         System.out.println("| T |   |              |                          ");
-        System.out.println("| E | 1 |   " + falsePositive + "          |   " + truePositive + "                        ");
+        System.out.println("| E | 1 |   " + falsePositive + "        |   " + truePositive + "                        ");
         System.out.println("| D |   |              |                           ");
     }
 

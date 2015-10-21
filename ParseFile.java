@@ -11,18 +11,19 @@ public class ParseFile {
         BufferedReader br;
 
         try {
-            fr = new FileReader(new File("input.txt"));
+            fr = new FileReader(new File("logistic_input.txt"));
             br = new BufferedReader(fr);
 
             String trainingSetPath = br.readLine();
             String testSetPath = br.readLine();
+            double learningRate = Double.parseDouble(br.readLine());
             br.close();
 
             int classifyLabel = 1;
 
             ArrayList<Example> dataSet = createDataSet(classifyLabel, trainingSetPath);
 
-            LogisticTrain logisticTrain = new LogisticTrain(dataSet.get(0).getValues().length);
+            LogisticTrain logisticTrain = new LogisticTrain(dataSet.get(0).getValues().length,learningRate);
             logisticTrain.train(dataSet);
 
             ArrayList<Example> testDataSet = createDataSet(classifyLabel, testSetPath);

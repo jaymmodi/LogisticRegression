@@ -6,6 +6,16 @@ public class Example {
     int index;
     double values[];
     int label;
+    String actualLabel;
+    String predictedLabel;
+
+    public String getPredictedLabel() {
+        return predictedLabel;
+    }
+
+    public void setPredictedLabel(String predictedLabel) {
+        this.predictedLabel = predictedLabel;
+    }
 
     public Example() {
     }
@@ -16,6 +26,14 @@ public class Example {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public String getActualLabel() {
+        return actualLabel;
+    }
+
+    public void setActualLabel(String actualLabel) {
+        this.actualLabel = actualLabel;
     }
 
     public double[] getValues() {

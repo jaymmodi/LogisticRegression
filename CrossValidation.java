@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by jay on 11/28/15.
@@ -34,6 +31,7 @@ public class CrossValidation {
         BufferedReader br;
 
         Set<String> distinctLabels = new HashSet<String>();
+        Map<String, Integer> labelCount = new HashMap<>();
         try {
             br = new BufferedReader(new FileReader(pathToFile));
             setDataSpecificInformation(data, br);
@@ -52,6 +50,7 @@ public class CrossValidation {
                     if (i == perLine.length - 1) {
                         trainingExample.setActualLabel(perLine[i]);
                         distinctLabels.add(perLine[i]);
+                        addInMap(labelCount, perLine[i]);
                     } else {
                         values[i] = Double.parseDouble(perLine[i]);
                     }
@@ -65,12 +64,19 @@ public class CrossValidation {
             data.setNumberOfClassLabels(distinctLabels.size());
             data.setDistinctLabels(distinctLabels);
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return makeDataSet(allExamples, folds, foldIndex);
+    }
+
+    private void addInMap(Map<String, Integer> labelCount, String label) {
+        if (labelCount.containsKey(label)) {
+            Integer count = labelCount.get(label);
+            labelCount.put(label, ++count);
+        } else {
+            labelCount.put(label, 1);
+        }
     }
 
     private ArrayList<Example> makeDataSet(ArrayList<Example> allExamples, int folds, int foldIndex) {

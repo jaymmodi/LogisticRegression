@@ -1,5 +1,6 @@
 package LogisticRegression;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -12,6 +13,15 @@ public class Data {
     int[] distinctValuesPerColumn;
     String[] namesOfColumns;
     Set<String> distinctLabels;
+    Map<String,Integer> labelCount;
+
+    public Map<String, Integer> getLabelCount() {
+        return labelCount;
+    }
+
+    public void setLabelCount(Map<String, Integer> labelCount) {
+        this.labelCount = labelCount;
+    }
 
 
     public Set<String> getDistinctLabels() {

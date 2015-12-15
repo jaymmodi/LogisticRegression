@@ -29,15 +29,17 @@ public class LogisticTrain {
         int iter = 1;
         while (true) {
             initializeVectorToZERO(gradientVector);
-//            printVector(iter,weightVector);
             storeLastWeightVector(lastWeightVector, weightVector);
 
             double cost = 0.0;
 
             for (Example trainingExample : dataSet) {
+                double costForInstance;
                 double probabilityPerExample = calculateSigmoid(trainingExample.getValues());
 
-                cost = calculateCostForInstance(cost, probabilityPerExample, trainingExample.getLabel(), dataSet.size());
+                costForInstance = calculateCostForInstance(probabilityPerExample, trainingExample.getLabel());
+
+                cost = cost + costForInstance;
 
                 double error = trainingExample.getLabel() - probabilityPerExample;
 
@@ -46,11 +48,12 @@ public class LogisticTrain {
                 }
 
             }
+            cost = cost / dataSet.size();
             System.out.println(iter + "  " + cost);
             updateWeightVector();
 
             double diff = getCostDifference(previousCost, cost);
-            if (Double.isNaN(cost) || (diff >= 0.001 && diff <= 0.002) || (iter == 5000)) {
+            if (Double.isNaN(cost) || (diff <= 0.00001)) {
                 break;
             }
 
@@ -72,11 +75,11 @@ public class LogisticTrain {
         return list;
     }
 
-    private double calculateCostForInstance(double cost, double probabilityPerExample, int label, int size) {
+    private double calculateCostForInstance(double probabilityPerExample, int label) {
 
-        double penalty = (-label * Math.log(probabilityPerExample)) - ((1 - label) * Math.log(1 - probabilityPerExample)) / size;
+        double penalty = ((-label * Math.log(probabilityPerExample)) - ((1 - label) * Math.log(1 - probabilityPerExample)));
 
-        return penalty + cost;
+        return penalty;
     }
 
     private void storeLastWeightVector(double[] lastWeightVector, double[] weightVector) {
@@ -159,7 +162,6 @@ public class LogisticTrain {
             System.out.println(example.actualLabel + "    " + example.getPredictedLabel());
 
         }
-        System.out.println((double) count / testDataSet.size() * 100);
 
         return ((double) count) / testDataSet.size() * 100;
 //        calculateAccuracy(truePositive, falsePositive, trueNegative, falseNegative);
